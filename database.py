@@ -1,11 +1,11 @@
 import mysql.connector  # Importamos la librería instalada
 try:
-    # Nos conectamos con la base de datos 'demo'
+# Nos conectamos con la base de datos 'demo'
     database = mysql.connector.connect(
-        host = "localhost",
-        user = 'root',
-        password = '12345',
-        database = 'bd',
+        host = "b6upluum2puellshpfuc-mysql.services.clever-cloud.com",
+        user = 'u7ue5pi4cpxzq1zw',
+        password = 'x4UlJAOlk10uz7ncZnGZ',
+        database = 'b6upluum2puellshpfuc',
         port = '3306'
     )
     # Verificamos que se haya realizado la conexión e imprimimos los resultados
