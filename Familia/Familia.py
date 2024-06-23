@@ -17,7 +17,7 @@ app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM region")
+    cursor.execute("SELECT * FROM Familia")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -27,73 +27,75 @@ def home():
     cursor.close()
     return render_template('Familia.html', data=insertObject)
 
-@app.route('/region', methods=['POST'])
-def addregion():
-    codreg = request.form['codreg']
-    nomreg = request.form['nomreg']
+@app.route('/familia', methods=['POST'])
+def addfamilia():
+    famcod = request.form['famcod']
+    famnom = request.form['famnom']
+    famnumint = request.form['famnumint']
     
-    if codreg and nomreg:
+    if famcod and famnom and famnumint:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM region WHERE RegCod = %s", (codreg,))
+        cursor.execute("SELECT * FROM Familia WHERE FamCod = %s", (famcod,))
         existing_cod = cursor.fetchone()
         
         # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM region WHERE RegNom = %s", (nomreg,))
+        cursor.execute("SELECT * FROM Familia WHERE FamNom = %s", (famnom,))
         existing_nom = cursor.fetchone()
         
         if existing_cod:
-            flash('El código de región ya existe. Por favor ingrese un código diferente.')
+            flash('El código de familia ya existe. Por favor ingrese un código diferente.')
             cursor.close()
             return redirect(url_for('home'))
         elif existing_nom:
-            flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+            flash('El nombre de la familia ya existe. Por favor ingrese un nombre diferente.')
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO region (RegCod, RegNom, RegEstReg) VALUES (%s, %s, 'A')"
-        data = (codreg, nomreg)
+        sql = "INSERT INTO Familia (FamCod, FamNom, FamNumInt, FamEstReg) VALUES (%s, %s, %s, 'A')"
+        data = (famcod, famnom, famnumint)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
-        flash('Región insertada exitosamente.')
+        flash('Familia insertada exitosamente.')
     return redirect(url_for('home'))
 
-@app.route('/delete/<string:codreg>')
-def delete(codreg):
+@app.route('/delete/<string:famcod>')
+def delete(famcod):
     cursor = db.database.cursor()
-    sql = "DELETE FROM region WHERE RegCod = %s"
-    data = (codreg,)
+    sql = "DELETE FROM Familia WHERE FamCod = %s"
+    data = (famcod,)
     cursor.execute(sql, data)
     db.database.commit()
     return redirect(url_for('home'))
 
-@app.route('/edit/<string:codreg>', methods=['POST'])
-def edit(codreg):
+@app.route('/edit/<string:famcod>', methods=['POST'])
+def edit(famcod):
     if 'action' in request.form:
         action = request.form['action']
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE region SET RegEstReg='I' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE Familia SET FamEstReg='I' WHERE FamCod=%s"
+            cursor.execute(sql, (famcod,))
         elif action == 'activar':
-            sql = "UPDATE region SET RegEstReg='A' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE Familia SET FamEstReg='A' WHERE FamCod=%s"
+            cursor.execute(sql, (famcod,))
         elif action == 'edit':
-            nomreg = request.form['nomreg']
-            if nomreg:
+            famnom = request.form['famnom']
+            famnumint = request.form['famnumint']
+            if famnom and famnumint:
                 # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM region WHERE RegNom = %s AND RegCod != %s", (nomreg, codreg))
+                cursor.execute("SELECT * FROM Familia WHERE FamNom = %s AND FamCod != %s", (famnom, famcod))
                 existing_nom = cursor.fetchone()
                 if existing_nom:
-                    flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+                    flash('El nombre de la familia ya existe. Por favor ingrese un nombre diferente.')
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE region SET RegNom=%s WHERE RegCod=%s"
-                cursor.execute(sql, (nomreg, codreg))
+                sql = "UPDATE Familia SET FamNom=%s, FamNumInt=%s WHERE FamCod=%s"
+                cursor.execute(sql, (famnom, famnumint, famcod))
         
         db.database.commit()
         cursor.close()
