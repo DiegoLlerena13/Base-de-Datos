@@ -17,7 +17,7 @@ app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM region")
+    cursor.execute("SELECT * FROM Tipo_Persona")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -27,73 +27,74 @@ def home():
     cursor.close()
     return render_template('Tipo_Persona.html', data=insertObject)
 
-@app.route('/region', methods=['POST'])
-def addregion():
-    codreg = request.form['codreg']
-    nomreg = request.form['nomreg']
+@app.route('/tipopersona', methods=['POST'])
+def add_tipopersona():
+    tip_per_cod = request.form['tip_per_cod']
+    tip_per_des = request.form['tip_per_des']
     
-    if codreg and nomreg:
+    if tip_per_cod and tip_per_des:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM region WHERE RegCod = %s", (codreg,))
+        cursor.execute("SELECT * FROM Tipo_Persona WHERE TipPerCod = %s", (tip_per_cod,))
         existing_cod = cursor.fetchone()
         
         # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM region WHERE RegNom = %s", (nomreg,))
-        existing_nom = cursor.fetchone()
+        cursor.execute("SELECT * FROM Tipo_Persona WHERE TipPerDes = %s", (tip_per_des,))
+        existing_des = cursor.fetchone()
         
         if existing_cod:
-            flash('El código de región ya existe. Por favor ingrese un código diferente.')
+            flash('El código de tipo persona ya existe. Por favor ingrese un código diferente.')
             cursor.close()
             return redirect(url_for('home'))
-        elif existing_nom:
-            flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+        elif existing_des:
+            flash('La descripción de tipo persona ya existe. Por favor ingrese una descripción diferente.')
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO region (RegCod, RegNom, RegEstReg) VALUES (%s, %s, 'A')"
-        data = (codreg, nomreg)
+        sql = "INSERT INTO Tipo_Persona (TipPerCod, TipPerDes, TipVivEstReg) VALUES (%s, %s, 'A')"
+        data = (tip_per_cod, tip_per_des)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
-        flash('Región insertada exitosamente.')
+        flash('Tipo de Persona insertado exitosamente.')
     return redirect(url_for('home'))
 
-@app.route('/delete/<string:codreg>')
-def delete(codreg):
+@app.route('/delete/<int:tip_per_cod>')
+def delete(tip_per_cod):
     cursor = db.database.cursor()
-    sql = "DELETE FROM region WHERE RegCod = %s"
-    data = (codreg,)
+    sql = "DELETE FROM Tipo_Persona WHERE TipPerCod = %s"
+    data = (tip_per_cod,)
     cursor.execute(sql, data)
     db.database.commit()
+    cursor.close()
     return redirect(url_for('home'))
 
-@app.route('/edit/<string:codreg>', methods=['POST'])
-def edit(codreg):
+@app.route('/edit/<int:tip_per_cod>', methods=['POST'])
+def edit(tip_per_cod):
     if 'action' in request.form:
         action = request.form['action']
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE region SET RegEstReg='I' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE Tipo_Persona SET TipVivEstReg='I' WHERE TipPerCod=%s"
+            cursor.execute(sql, (tip_per_cod,))
         elif action == 'activar':
-            sql = "UPDATE region SET RegEstReg='A' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE Tipo_Persona SET TipVivEstReg='A' WHERE TipPerCod=%s"
+            cursor.execute(sql, (tip_per_cod,))
         elif action == 'edit':
-            nomreg = request.form['nomreg']
-            if nomreg:
-                # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM region WHERE RegNom = %s AND RegCod != %s", (nomreg, codreg))
-                existing_nom = cursor.fetchone()
-                if existing_nom:
-                    flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+            tip_per_des = request.form['tip_per_des']
+            if tip_per_des:
+                # Verificar si la descripción ya existe para otros registros
+                cursor.execute("SELECT * FROM Tipo_Persona WHERE TipPerDes = %s AND TipPerCod != %s", (tip_per_des, tip_per_cod))
+                existing_des = cursor.fetchone()
+                if existing_des:
+                    flash('La descripción de tipo persona ya existe. Por favor ingrese una descripción diferente.')
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE region SET RegNom=%s WHERE RegCod=%s"
-                cursor.execute(sql, (nomreg, codreg))
+                sql = "UPDATE Tipo_Persona SET TipPerDes=%s WHERE TipPerCod=%s"
+                cursor.execute(sql, (tip_per_des, tip_per_cod))
         
         db.database.commit()
         cursor.close()
