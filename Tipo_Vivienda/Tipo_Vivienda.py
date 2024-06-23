@@ -1,9 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import os
+import sys
+
+# Agregar el directorio raíz del proyecto al sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Ahora puedes importar el archivo database.py
 import database as db
 
 template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-template_dir = os.path.join(template_dir, 'src', 'templates')
+template_dir = os.path.join(template_dir, 'Tipo_Vivienda', 'templates')
 
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
@@ -19,7 +25,7 @@ def home():
     for record in myresult:
         insertObject.append(dict(zip(columnNames, record)))
     cursor.close()
-    return render_template('index.html', data=insertObject)
+    return render_template('Tipo_Vivienda.html', data=insertObject)
 
 @app.route('/region', methods=['POST'])
 def addregion():
