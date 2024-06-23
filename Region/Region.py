@@ -17,7 +17,7 @@ app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM region")
+    cursor.execute("SELECT * FROM Region")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -36,11 +36,11 @@ def addregion():
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM region WHERE RegCod = %s", (codreg,))
+        cursor.execute("SELECT * FROM Region WHERE RegCod = %s", (codreg,))
         existing_cod = cursor.fetchone()
         
         # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM region WHERE RegNom = %s", (nomreg,))
+        cursor.execute("SELECT * FROM Region WHERE RegNom = %s", (nomreg,))
         existing_nom = cursor.fetchone()
         
         if existing_cod:
@@ -52,7 +52,7 @@ def addregion():
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO region (RegCod, RegNom, RegEstReg) VALUES (%s, %s, 'A')"
+        sql = "INSERT INTO Region (RegCod, RegNom, RegEstReg) VALUES (%s, %s, 'A')"
         data = (codreg, nomreg)
         cursor.execute(sql, data)
         db.database.commit()
@@ -63,7 +63,7 @@ def addregion():
 @app.route('/delete/<string:codreg>')
 def delete(codreg):
     cursor = db.database.cursor()
-    sql = "DELETE FROM region WHERE RegCod = %s"
+    sql = "DELETE FROM Region WHERE RegCod = %s"
     data = (codreg,)
     cursor.execute(sql, data)
     db.database.commit()
@@ -76,23 +76,23 @@ def edit(codreg):
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE region SET RegEstReg='I' WHERE RegCod=%s"
+            sql = "UPDATE Region SET RegEstReg='I' WHERE RegCod=%s"
             cursor.execute(sql, (codreg,))
         elif action == 'activar':
-            sql = "UPDATE region SET RegEstReg='A' WHERE RegCod=%s"
+            sql = "UPDATE Region SET RegEstReg='A' WHERE RegCod=%s"
             cursor.execute(sql, (codreg,))
         elif action == 'edit':
             nomreg = request.form['nomreg']
             if nomreg:
                 # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM region WHERE RegNom = %s AND RegCod != %s", (nomreg, codreg))
+                cursor.execute("SELECT * FROM Region WHERE RegNom = %s AND RegCod != %s", (nomreg, codreg))
                 existing_nom = cursor.fetchone()
                 if existing_nom:
                     flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE region SET RegNom=%s WHERE RegCod=%s"
+                sql = "UPDATE Region SET RegNom=%s WHERE RegCod=%s"
                 cursor.execute(sql, (nomreg, codreg))
         
         db.database.commit()
