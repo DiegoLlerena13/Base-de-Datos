@@ -9,15 +9,17 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import database as db
 
 template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-template_dir = os.path.join(template_dir, 'ZonaUrbana', 'templates')
+template_dir = os.path.join(template_dir, 'Zona_Urbana', 'templates')
 
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 
+
+
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM zonaurbana")
+    cursor.execute("SELECT * FROM Zona_Urbana")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -25,22 +27,22 @@ def home():
     for record in myresult:
         insertObject.append(dict(zip(columnNames, record)))
     cursor.close()
-    return render_template('ZonaUrbana.html', data=insertObject)
+    return render_template('Zona_Urbana.html', data=insertObject)
 
-@app.route('/zonaurbana', methods=['POST'])
-def addzonaurbana():
-    codzona = request.form['codzona']
-    nomzona = request.form['nomzona']
+@app.route('/zona_urbana', methods=['POST'])
+def add_zona():
+    cod_zona = request.form['cod_zona']
+    nom_zona = request.form['nom_zona']
     
-    if codzona and nomzona:
+    if cod_zona and nom_zona:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM zonaurbana WHERE ZUCod = %s", (codzona,))
+        cursor.execute("SELECT * FROM Zona_Urbana WHERE ZonCod = %s", (cod_zona,))
         existing_cod = cursor.fetchone()
         
         # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM zonaurbana WHERE ZUNom = %s", (nomzona,))
+        cursor.execute("SELECT * FROM Zona_Urbana WHERE ZonNom = %s", (nom_zona,))
         existing_nom = cursor.fetchone()
         
         if existing_cod:
@@ -52,48 +54,49 @@ def addzonaurbana():
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO zonaurbana (ZUCod, ZUNom, ZUEstReg) VALUES (%s, %s, 'A')"
-        data = (codzona, nomzona)
+        sql = "INSERT INTO Zona_Urbana (ZonCod, ZonNom, ZonEstReg, MunCod) VALUES (%s, %s, 'A', 1)"  # Ajustar MunCod según sea necesario
+        data = (cod_zona, nom_zona)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
         flash('Zona urbana insertada exitosamente.')
     return redirect(url_for('home'))
 
-@app.route('/delete/<string:codzona>')
-def delete(codzona):
+@app.route('/delete/<string:cod_zona>')
+def delete(cod_zona):
     cursor = db.database.cursor()
-    sql = "DELETE FROM zonaurbana WHERE ZUCod = %s"
-    data = (codzona,)
+    sql = "DELETE FROM Zona_Urbana WHERE ZonCod = %s"
+    data = (cod_zona,)
     cursor.execute(sql, data)
     db.database.commit()
+    cursor.close()
     return redirect(url_for('home'))
 
-@app.route('/edit/<string:codzona>', methods=['POST'])
-def edit(codzona):
+@app.route('/edit/<string:cod_zona>', methods=['POST'])
+def edit(cod_zona):
     if 'action' in request.form:
         action = request.form['action']
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE zonaurbana SET ZUEstReg='I' WHERE ZUCod=%s"
-            cursor.execute(sql, (codzona,))
+            sql = "UPDATE Zona_Urbana SET ZonEstReg='I' WHERE ZonCod=%s"
+            cursor.execute(sql, (cod_zona,))
         elif action == 'activar':
-            sql = "UPDATE zonaurbana SET ZUEstReg='A' WHERE ZUCod=%s"
-            cursor.execute(sql, (codzona,))
+            sql = "UPDATE Zona_Urbana SET ZonEstReg='A' WHERE ZonCod=%s"
+            cursor.execute(sql, (cod_zona,))
         elif action == 'edit':
-            nomzona = request.form['nomzona']
-            if nomzona:
+            nom_zona = request.form['nom_zona']
+            if nom_zona:
                 # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM zonaurbana WHERE ZUNom = %s AND ZUCod != %s", (nomzona, codzona))
+                cursor.execute("SELECT * FROM Zona_Urbana WHERE ZonNom = %s AND ZonCod != %s", (nom_zona, cod_zona))
                 existing_nom = cursor.fetchone()
                 if existing_nom:
                     flash('El nombre de la zona urbana ya existe. Por favor ingrese un nombre diferente.')
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE zonaurbana SET ZUNom=%s WHERE ZUCod=%s"
-                cursor.execute(sql, (nomzona, codzona))
+                sql = "UPDATE Zona_Urbana SET ZonNom=%s WHERE ZonCod=%s"
+                cursor.execute(sql, (nom_zona, cod_zona))
         
         db.database.commit()
         cursor.close()

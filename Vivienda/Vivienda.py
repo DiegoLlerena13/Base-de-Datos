@@ -17,7 +17,7 @@ app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM vivienda")
+    cursor.execute("SELECT * FROM Vivienda")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -36,11 +36,11 @@ def addvivienda():
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM vivienda WHERE VivCod = %s", (codviv,))
+        cursor.execute("SELECT * FROM Vivienda WHERE VivCod = %s", (codviv,))
         existing_cod = cursor.fetchone()
         
         # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM vivienda WHERE VivNom = %s", (nomviv,))
+        cursor.execute("SELECT * FROM Vivienda WHERE VivNom = %s", (nomviv,))
         existing_nom = cursor.fetchone()
         
         if existing_cod:
@@ -63,7 +63,7 @@ def addvivienda():
 @app.route('/delete/<string:codviv>')
 def delete(codviv):
     cursor = db.database.cursor()
-    sql = "DELETE FROM vivienda WHERE VivCod = %s"
+    sql = "DELETE FROM Vivienda WHERE VivCod = %s"
     data = (codviv,)
     cursor.execute(sql, data)
     db.database.commit()
@@ -76,23 +76,23 @@ def edit(codviv):
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE vivienda SET VivEstReg='I' WHERE VivCod=%s"
+            sql = "UPDATE Vivienda SET VivEstReg='I' WHERE VivCod=%s"
             cursor.execute(sql, (codviv,))
         elif action == 'activar':
-            sql = "UPDATE vivienda SET VivEstReg='A' WHERE VivCod=%s"
+            sql = "UPDATE Vivienda SET VivEstReg='A' WHERE VivCod=%s"
             cursor.execute(sql, (codviv,))
         elif action == 'edit':
             nomviv = request.form['nomviv']
             if nomviv:
                 # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM vivienda WHERE VivNom = %s AND VivCod != %s", (nomviv, codviv))
+                cursor.execute("SELECT * FROM Vivienda WHERE VivNom = %s AND VivCod != %s", (nomviv, codviv))
                 existing_nom = cursor.fetchone()
                 if existing_nom:
                     flash('El nombre de la vivienda ya existe. Por favor ingrese un nombre diferente.')
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE vivienda SET VivNom=%s WHERE VivCod=%s"
+                sql = "UPDATE Vivienda SET VivNom=%s WHERE VivCod=%s"
                 cursor.execute(sql, (nomviv, codviv))
         
         db.database.commit()

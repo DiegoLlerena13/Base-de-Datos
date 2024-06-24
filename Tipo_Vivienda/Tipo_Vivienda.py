@@ -20,7 +20,7 @@ app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM tipovivienda")
+    cursor.execute("SELECT * FROM Tipo_Vivienda")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -31,33 +31,25 @@ def home():
     return render_template('Tipo_Vivienda.html', data=insertObject)
 
 # Ruta para agregar un tipo de vivienda
-@app.route('/tipovivienda', methods=['POST'])
+@app.route('/tipo_vivienda', methods=['POST'])
 def add_tipovivienda():
     codtipoviv = request.form['codtipoviv']
-    nomtipoviv = request.form['nomtipoviv']
+    desctipoviv = request.form['desctipoviv']
     
-    if codtipoviv and nomtipoviv:
+    if codtipoviv and desctipoviv:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM tipovivienda WHERE TipVivCod = %s", (codtipoviv,))
+        cursor.execute("SELECT * FROM Tipo_Vivienda WHERE TipVivCod = %s", (codtipoviv,))
         existing_cod = cursor.fetchone()
-        
-        # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM tipovivienda WHERE TipVivNom = %s", (nomtipoviv,))
-        existing_nom = cursor.fetchone()
         
         if existing_cod:
             flash('El código de tipo de vivienda ya existe. Por favor ingrese un código diferente.')
             cursor.close()
             return redirect(url_for('home'))
-        elif existing_nom:
-            flash('El nombre del tipo de vivienda ya existe. Por favor ingrese un nombre diferente.')
-            cursor.close()
-            return redirect(url_for('home'))
 
-        sql = "INSERT INTO tipovivienda (TipVivCod, TipVivNom, TipVivEstReg) VALUES (%s, %s, 'A')"
-        data = (codtipoviv, nomtipoviv)
+        sql = "INSERT INTO Tipo_Vivienda (TipVivCod, TipVivDes, TipVivEstReg) VALUES (%s, %s, 'A')"
+        data = (codtipoviv, desctipoviv)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
@@ -68,7 +60,7 @@ def add_tipovivienda():
 @app.route('/delete/<string:codtipoviv>')
 def delete_tipovivienda(codtipoviv):
     cursor = db.database.cursor()
-    sql = "DELETE FROM tipovivienda WHERE TipVivCod = %s"
+    sql = "DELETE FROM Tipo_Vivienda WHERE TipVivCod = %s"
     data = (codtipoviv,)
     cursor.execute(sql, data)
     db.database.commit()
@@ -82,24 +74,16 @@ def edit_tipovivienda(codtipoviv):
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE tipovivienda SET TipVivEstReg='I' WHERE TipVivCod=%s"
+            sql = "UPDATE Tipo_Vivienda SET TipVivEstReg='I' WHERE TipVivCod=%s"
             cursor.execute(sql, (codtipoviv,))
         elif action == 'activar':
-            sql = "UPDATE tipovivienda SET TipVivEstReg='A' WHERE TipVivCod=%s"
+            sql = "UPDATE Vipo_Vivienda SET TipVivEstReg='A' WHERE TipVivCod=%s"
             cursor.execute(sql, (codtipoviv,))
         elif action == 'edit':
-            nomtipoviv = request.form['nomtipoviv']
-            if nomtipoviv:
-                # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM tipovivienda WHERE TipVivNom = %s AND TipVivCod != %s", (nomtipoviv, codtipoviv))
-                existing_nom = cursor.fetchone()
-                if existing_nom:
-                    flash('El nombre del tipo de vivienda ya existe. Por favor ingrese un nombre diferente.')
-                    cursor.close()
-                    return redirect(url_for('home'))
-
-                sql = "UPDATE tipovivienda SET TipVivNom=%s WHERE TipVivCod=%s"
-                cursor.execute(sql, (nomtipoviv, codtipoviv))
+            desctipoviv = request.form['desctipoviv']
+            if desctipoviv:
+                sql = "UPDATE Tipo_Vienda SET TipVivDes=%s WHERE TipVivCod=%s"
+                cursor.execute(sql, (desctipoviv, codtipoviv))
         
         db.database.commit()
         cursor.close()
