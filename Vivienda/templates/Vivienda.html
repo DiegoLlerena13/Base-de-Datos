@@ -36,8 +36,20 @@
                           <form action="/vivienda" method="post">
                             <label>CÓDIGO DE VIVIENDA</label>
                             <input type="text" class="form-control mb-3" name="codviv">
-                            <label>NOMBRE DE VIVIENDA</label>
-                            <input type="text" class="form-control mb-3" name="nomviv">
+                            <label>CALLE</label>
+                            <input type="text" class="form-control mb-3" name="vivcal">
+                            <label>NÚMERO</label>
+                            <input type="text" class="form-control mb-3" name="vivnum">
+                            <label>CÓDIGO POSTAL</label>
+                            <input type="text" class="form-control mb-3" name="vivcodpos">
+                            <label>METROS</label>
+                            <input type="text" class="form-control mb-3" name="vivmet">
+                            <label>OCUPACIÓN</label>
+                            <input type="text" class="form-control mb-3" name="vivocu">
+                            <label>CÓDIGO DE ZONA</label>
+                            <input type="text" class="form-control mb-3" name="zoncod">
+                            <label>CÓDIGO TIPO DE VIVIENDA</label>
+                            <input type="text" class="form-control mb-3" name="tipvivcod">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
@@ -50,7 +62,13 @@
                 <table class="table table-bordered">
                     <thead>
                         <th scope="col">CÓDIGO DE VIVIENDA</th>
-                        <th scope="col">NOMBRE DE VIVIENDA</th>
+                        <th scope="col">CALLE</th>
+                        <th scope="col">NÚMERO</th>
+                        <th scope="col">CÓDIGO POSTAL</th>
+                        <th scope="col">METROS</th>
+                        <th scope="col">OCUPACIÓN</th>
+                        <th scope="col">CÓDIGO DE ZONA</th>
+                        <th scope="col">CÓDIGO TIPO DE VIVIENDA</th>
                         <th scope="col">ESTADO DE REGISTRO</th>
                         <th scope="col">EDIT</th>
                         <th scope="col">DELETE</th>
@@ -59,7 +77,13 @@
                         {% for d in data %}
                             <tr>
                                 <td>{{ d.VivCod }}</td>
-                                <td>{{ d.VivNom }}</td>
+                                <td>{{ d.VivCal }}</td>
+                                <td>{{ d.VivNum }}</td>
+                                <td>{{ d.VivCodPos }}</td>
+                                <td>{{ d.VivMet }}</td>
+                                <td>{{ d.VivOcu }}</td>
+                                <td>{{ d.ZonCod }}</td>
+                                <td>{{ d.TipVivCod }}</td>
                                 <td>{{ d.VivEstReg }}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" id="btn-edit{{ d.VivCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.VivCod }}">Edit</button>
@@ -73,21 +97,33 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.VivCod }}">{{ d.VivNom }}</h1>
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.VivCod }}">Editar {{ d.VivNom }}</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <form action="/edit/{{ d.VivCod }}" method="post">
                                                 <label>CÓDIGO DE VIVIENDA</label>
                                                 <p>{{ d.VivCod }}</p>
-                                                <label>NOMBRE DE VIVIENDA</label>
-                                                <input type="text" class="form-control mb-3" name="nomviv" value="{{ d.VivNom }}">
+                                                <label>CALLE</label>
+                                                <input type="text" class="form-control mb-3" name="vivcal" value="{{ d.VivCal }}">
+                                                <label>NÚMERO</label>
+                                                <input type="text" class="form-control mb-3" name="vivnum" value="{{ d.VivNum }}">
+                                                <label>CÓDIGO POSTAL</label>
+                                                <input type="text" class="form-control mb-3" name="vivcodpos" value="{{ d.VivCodPos }}">
+                                                <label>METROS</label>
+                                                <input type="text" class="form-control mb-3" name="vivmet" value="{{ d.VivMet }}">
+                                                <label>OCUPACIÓN</label>
+                                                <input type="text" class="form-control mb-3" name="vivocu" value="{{ d.VivOcu }}">
+                                                <label>CÓDIGO DE ZONA</label>
+                                                <input type="text" class="form-control mb-3" name="zoncod" value="{{ d.ZonCod }}">
+                                                <label>CÓDIGO TIPO DE VIVIENDA</label>
+                                                <input type="text" class="form-control mb-3" name="tipvivcod" value="{{ d.TipVivCod }}">
                                                 <label>ESTADO DE REGISTRO</label>
                                                 <p>{{ d.VivEstReg }}</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes</button>
-                                            <button type="submit" name="action" value="activar" class="btn btn-primary"> Activar</button>
+                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Guardar Cambios</button>
+                                            <button type="submit" name="action" value="activar" class="btn btn-primary">Activar</button>
                                             <button type="submit" name="action" value="inactivar" class="btn btn-danger">Inactivar</button>
                                             </form>
                                         </div>
@@ -107,8 +143,8 @@
                                                 <p>¿Desea eliminar este registro?</p>
                                                 <label>CÓDIGO DE VIVIENDA</label>
                                                 <p id="modalVivCod{{ d.VivCod }}">{{ d.VivCod }}</p>
-                                                <label>NOMBRE DE VIVIENDA</label>
-                                                <p id="modalVivNom{{ d.VivCod }}">{{ d.VivNom }}</p>
+                                                <label>CALLE</label>
+                                                <p id="modalVivCal{{ d.VivCod }}">{{ d.VivCal }}</p>
                                             </form>
                                         </div>
                                         <div class="modal-footer">
