@@ -13,13 +13,13 @@
     <div class="container">
         <!-- Mostrar mensajes de flash -->
         {% with messages = get_flashed_messages() %}
-          {% if messages %}
+        {% if messages %}
             <div class="alert alert-warning mt-3" role="alert">
-              {% for message in messages %}
+            {% for message in messages %}
                 <p>{{ message }}</p>
-              {% endfor %}
+            {% endfor %}
             </div>
-          {% endif %}
+        {% endif %}
         {% endwith %}
 
         <div class="card shadow">
@@ -27,30 +27,30 @@
                 <button class="btn btn-primary btn-sm" id="btn-insert" data-bs-toggle="modal" data-bs-target="#modalinsert">Insertar</button>
                 <div class="modal fade" id="modalinsert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
-                      <div class="modal-content">
+                    <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel">Insertar Datos</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Insertar Datos</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          <form action="/region" method="post">
-                            <label>CÓDIGO DE REGIÓN</label>
-                            <input type="text" class="form-control mb-3" name="codreg">
-                            <label>NOMBRE DE REGIÓN</label>
-                            <input type="text" class="form-control mb-3" name="nomreg">
+                        <form action="/zonaurbana" method="post">
+                            <label>CÓDIGO DE ZONA URBANA</label>
+                            <input type="text" class="form-control mb-3" name="codzona">
+                            <label>NOMBRE DE ZONA URBANA</label>
+                            <input type="text" class="form-control mb-3" name="nomzona">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
                         </div>
                         </form>
-                      </div>
+                    </div>
                     </div>
                 </div>
                 <!--Tabla-->
                 <table class="table table-bordered">
                     <thead>
-                        <th scope="col">CÓDIGO DE REGIÓN</th>
-                        <th scope="col">NOMBRE DE REGIÓN</th>
+                        <th scope="col">CÓDIGO DE ZONA URBANA</th>
+                        <th scope="col">NOMBRE DE ZONA URBANA</th>
                         <th scope="col">ESTADO DE REGISTRO</th>
                         <th scope="col">EDIT</th>
                         <th scope="col">DELETE</th>
@@ -58,36 +58,37 @@
                     <tbody>
                         {% for d in data %}
                             <tr>
-                                <td>{{ d.RegCod }}</td>
-                                <td>{{ d.RegNom }}</td>
-                                <td>{{ d.RegEstReg }}</td>
+                                <td>{{ d.ZUCod }}</td>
+                                <td>{{ d.ZUNom }}</td>
+                                <td>{{ d.ZUEstReg }}</td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.RegCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.RegCod }}">Edit</button>
+                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.ZUCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.ZUCod }}">Edit</button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.RegCod }}" data-regcod="{{ d.RegCod }}" data-regnom="{{ d.RegNom }}">Delete</button>
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal
+                                    {{ d.ZUCod }}" data-regcod="{{ d.ZUCod }}" data-regnom="{{ d.ZUNom }}">Delete</button>
                                 </td>
                             </tr>
                             <!-- Edit Modal -->
-                            <div class="modal fade" id="modal{{ d.RegCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.RegCod }}" aria-hidden="true">
+                            <div class="modal fade" id="modal{{ d.ZUCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.ZUCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.RegCod }}">{{ d.RegNom }}</h1>
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.ZUCod }}">{{ d.ZUNom }}</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="/edit/{{ d.RegCod }}" method="post">
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <p>{{ d.RegCod }}</p>
-                                                <label>NOMBRE DE REGIÓN</label>
-                                                <input type="text" class="form-control mb-3" name="nomreg" value="{{ d.RegNom }}">
+                                            <form action="/edit/{{ d.ZUCod }}" method="post">
+                                                <label>CÓDIGO DE ZONA URBANA</label>
+                                                <p>{{ d.ZUCod }}</p>
+                                                <label>NOMBRE DE ZONA URBANA</label>
+                                                <input type="text" class="form-control mb-3" name="nomzona" value="{{ d.ZUNom }}">
                                                 <label>ESTADO DE REGISTRO</label>
-                                                <p>{{ d.RegEstReg }}</p>
+                                                <p>{{ d.ZUEstReg }}</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes<</button>
-                                            <button type="submit" name="action" value="activar" class="btn btn-primary"> Activar</button>
+                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes</button>
+                                            <button type="submit" name="action" value="activar" class="btn btn-primary">Activar</button>
                                             <button type="submit" name="action" value="inactivar" class="btn btn-danger">Inactivar</button>
                                             </form>
                                         </div>
@@ -95,25 +96,25 @@
                                 </div>
                             </div>
                             <!-- Delete Modal -->
-                            <div class="modal fade" id="deleteModal{{ d.RegCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.RegCod }}" aria-hidden="true">
+                            <div class="modal fade" id="deleteModal{{ d.ZUCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.ZUCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.RegCod }}">Confirmar Eliminación</h1>
+                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.ZUCod }}">Confirmar Eliminación</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <form>
                                                 <p>¿Desea eliminar este registro?</p>
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <p id="modalRegCod{{ d.RegCod }}">{{ d.RegCod }}</p>
-                                                <label>NOMBRE DE REGIÓN</label>
-                                                <p id="modalRegNom{{ d.RegCod }}">{{ d.RegNom }}</p>
+                                                <label>CÓDIGO DE ZONA URBANA</label>
+                                                <p id="modalRegCod{{ d.ZUCod }}">{{ d.ZUCod }}</p>
+                                                <label>NOMBRE DE ZONA URBANA</label>
+                                                <p id="modalRegNom{{ d.ZUCod }}">{{ d.ZUNom }}</p>
                                             </form>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <a href="/delete/{{ d.RegCod }}" class="btn btn-danger">Aceptar</a>
+                                            <a href="/delete/{{ d.ZUCod }}" class="btn btn-danger">Aceptar</a>
                                         </div>
                                     </div>
                                 </div>
@@ -126,4 +127,3 @@
     </div>
 </body>
 </html>
-
