@@ -38,6 +38,12 @@
                             <input type="text" class="form-control mb-3" name="codmun">
                             <label>NOMBRE DE MUNICIPIO</label>
                             <input type="text" class="form-control mb-3" name="nommun">
+                            <label>PRESUPUESTO ANUAL</label>
+                            <input type="number" class="form-control mb-3" name="preanu">
+                            <label>NÚMERO DE VIVIENDAS</label>
+                            <input type="number" class="form-control mb-3" name="numviv">
+                            <label>CÓDIGO DE REGIÓN</label>
+                            <input type="text" class="form-control mb-3" name="regcod">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
@@ -51,6 +57,9 @@
                     <thead>
                         <th scope="col">CÓDIGO DE MUNICIPIO</th>
                         <th scope="col">NOMBRE DE MUNICIPIO</th>
+                        <th scope="col">PRESUPUESTO ANUAL</th>
+                        <th scope="col">NÚMERO DE VIVIENDAS</th>
+                        <th scope="col">CÓDIGO DE REGIÓN</th>
                         <th scope="col">ESTADO DE REGISTRO</th>
                         <th scope="col">EDITAR</th>
                         <th scope="col">ELIMINAR</th>
@@ -60,6 +69,9 @@
                             <tr>
                                 <td>{{ d.MunCod }}</td>
                                 <td>{{ d.MunNom }}</td>
+                                <td>{{ d.MunPreAnu }}</td>
+                                <td>{{ d.MunNumViv }}</td>
+                                <td>{{ d.RegCod }}</td>
                                 <td>{{ d.MunEstReg }}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm" id="btn-edit{{ d.MunCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.MunCod }}">Editar</button>
@@ -81,8 +93,13 @@
                                                 <label>CÓDIGO DE MUNICIPIO</label>
                                                 <p>{{ d.MunCod }}</p>
                                                 <label>NOMBRE DE MUNICIPIO</label>
-                                                <input type="text" class="form-control mb-3"
-                                                name="nommun" value="{{ d.MunNom }}">
+                                                <input type="text" class="form-control mb-3" name="nommun" value="{{ d.MunNom }}">
+                                                <label>PRESUPUESTO ANUAL</label>
+                                                <input type="number" class="form-control mb-3" name="preanu" value="{{ d.MunPreAnu }}">
+                                                <label>NÚMERO DE VIVIENDAS</label>
+                                                <input type="number" class="form-control mb-3" name="numviv" value="{{ d.MunNumViv }}">
+                                                <label>CÓDIGO DE REGIÓN</label>
+                                                <input type="text" class="form-control mb-3" name="regcod" value="{{ d.RegCod }}">
                                                 <label>ESTADO DE REGISTRO</label>
                                                 <p>{{ d.MunEstReg }}</p>
                                         </div>
@@ -127,3 +144,4 @@
     </div>
 </body>
 </html>
+
