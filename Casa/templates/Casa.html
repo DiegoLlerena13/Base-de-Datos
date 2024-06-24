@@ -33,11 +33,23 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          <form action="/region" method="post">
-                            <label>CÓDIGO DE REGIÓN</label>
-                            <input type="text" class="form-control mb-3" name="codreg">
-                            <label>NOMBRE DE REGIÓN</label>
-                            <input type="text" class="form-control mb-3" name="nomreg">
+                          <form action="/casa" method="post">
+                            <label>CÓDIGO DE CASA</label>
+                            <input type="text" class="form-control mb-3" name="cascod" required>
+                            <label>ESCALERA</label>
+                            <input type="number" class="form-control mb-3" name="casesc">
+                            <label>CÓDIGO DE BLOQUE</label>
+                            <input type="text" class="form-control mb-3" name="cascod_blo">
+                            <label>PLANTA</label>
+                            <input type="number" class="form-control mb-3" name="caspla">
+                            <label>NÚMERO DE PUERTAS</label>
+                            <input type="number" class="form-control mb-3" name="casnum_pue">
+                            <label>METROS</label>
+                            <input type="text" class="form-control mb-3" name="casmet">
+                            <label>CODIGO DE VIVIENDA</label>
+                            <input type="number" class="form-control mb-3" name="vivcod" required>
+                            <label>CODIGO DE FAMILIA</label>
+                            <input type="number" class="form-control mb-3" name="famcod" required>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
@@ -49,8 +61,14 @@
                 <!--Tabla-->
                 <table class="table table-bordered">
                     <thead>
-                        <th scope="col">CÓDIGO DE REGIÓN</th>
-                        <th scope="col">NOMBRE DE REGIÓN</th>
+                        <th scope="col">CÓDIGO DE CASA</th>
+                        <th scope="col">ESCALERA</th>
+                        <th scope="col">CÓDIGO DE BLOQUE</th>
+                        <th scope="col">PLANTA</th>
+                        <th scope="col">NÚMERO DE PUERTAS</th>
+                        <th scope="col">METROS</th>
+                        <th scope="col">CODIGO DE VIVIENDA</th>
+                        <th scope="col">CODIGO DE FAMILIA</th>
                         <th scope="col">ESTADO DE REGISTRO</th>
                         <th scope="col">EDIT</th>
                         <th scope="col">DELETE</th>
@@ -58,35 +76,53 @@
                     <tbody>
                         {% for d in data %}
                             <tr>
-                                <td>{{ d.RegCod }}</td>
-                                <td>{{ d.RegNom }}</td>
-                                <td>{{ d.RegEstReg }}</td>
+                                <td>{{ d.CasCod }}</td>
+                                <td>{{ d.CasEsc }}</td>
+                                <td>{{ d.CasCodBlo }}</td>
+                                <td>{{ d.CasPla }}</td>
+                                <td>{{ d.CasNumPue }}</td>
+                                <td>{{ d.CasMet }}</td>
+                                <td>{{ d.VivCod }}</td>
+                                <td>{{ d.FamCod }}</td>
+                                <td>{{ d.CasEstReg }}</td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.RegCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.RegCod }}">Edit</button>
+                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.CasCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.CasCod }}">Edit</button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.RegCod }}" data-regcod="{{ d.RegCod }}" data-regnom="{{ d.RegNom }}">Delete</button>
+                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.CasCod }}" data-cascod="{{ d.CasCod }}">Delete</button>
                                 </td>
                             </tr>
                             <!-- Edit Modal -->
-                            <div class="modal fade" id="modal{{ d.RegCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.RegCod }}" aria-hidden="true">
+                            <div class="modal fade" id="modal{{ d.CasCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.CasCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.RegCod }}">{{ d.RegNom }}</h1>
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.CasCod }}">Editar Casa</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="/edit/{{ d.RegCod }}" method="post">
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <p>{{ d.RegCod }}</p>
-                                                <label>NOMBRE DE REGIÓN</label>
-                                                <input type="text" class="form-control mb-3" name="nomreg" value="{{ d.RegNom }}">
+                                            <form action="/edit/{{ d.CasCod }}" method="post">
+                                                <label>CÓDIGO DE CASA</label>
+                                                <p>{{ d.CasCod }}</p>
+                                                <label>ESCALERA</label>
+                                                <input type="number" class="form-control mb-3" name="casesc" value="{{ d.CasEsc }}">
+                                                <label>CÓDIGO DE BLOQUE</label>
+                                                <input type="text" class="form-control mb-3" name="cascod_blo" value="{{ d.CasCodBlo }}">
+                                                <label>PLANTA</label>
+                                                <input type="number" class="form-control mb-3" name="caspla" value="{{ d.CasPla }}">
+                                                <label>NÚMERO DE PUERTAS</label>
+                                                <input type="number" class="form-control mb-3" name="casnum_pue" value="{{ d.CasNumPue }}">
+                                                <label>METROS</label>
+                                                <input type="text" class="form-control mb-3" name="casmet" value="{{ d.CasMet }}">
+                                                <label>CODIGO DE VIVIENDA</label>
+                                                <input type="number" class="form-control mb-3" name="vivcod" value="{{ d.VivCod }}">
+                                                <label>CODIGO DE FAMILIA</label>
+                                                <input type="number" class="form-control mb-3" name="famcod" value="{{ d.FamCod }}">
                                                 <label>ESTADO DE REGISTRO</label>
-                                                <p>{{ d.RegEstReg }}</p>
+                                                <p>{{ d.CasEstReg }}</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes<</button>
+                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes</button>
                                             <button type="submit" name="action" value="activar" class="btn btn-primary"> Activar</button>
                                             <button type="submit" name="action" value="inactivar" class="btn btn-danger">Inactivar</button>
                                             </form>
@@ -95,25 +131,25 @@
                                 </div>
                             </div>
                             <!-- Delete Modal -->
-                            <div class="modal fade" id="deleteModal{{ d.RegCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.RegCod }}" aria-hidden="true">
+                            <div class="modal fade" id="deleteModal{{ d.CasCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.CasCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.RegCod }}">Confirmar Eliminación</h1>
+                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.CasCod }}">Confirmar Eliminación</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <form>
                                                 <p>¿Desea eliminar este registro?</p>
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <p id="modalRegCod{{ d.RegCod }}">{{ d.RegCod }}</p>
-                                                <label>NOMBRE DE REGIÓN</label>
-                                                <p id="modalRegNom{{ d.RegCod }}">{{ d.RegNom }}</p>
+                                                <label>CÓDIGO DE CASA</label>
+                                                <p id="modalCasCod{{ d.CasCod }}">{{ d.CasCod }}</p>
+                                                <label>CODIGO DE VIVIENDA</label>
+                                                <p id="modalVivCod{{ d.CasCod }}">{{ d.VivCod }}</p>
                                             </form>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <a href="/delete/{{ d.RegCod }}" class="btn btn-danger">Aceptar</a>
+                                            <a href="/delete/{{ d.CasCod }}" class="btn btn-danger">Aceptar</a>
                                         </div>
                                     </div>
                                 </div>
@@ -126,4 +162,3 @@
     </div>
 </body>
 </html>
-
