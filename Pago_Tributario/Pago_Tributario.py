@@ -17,7 +17,7 @@ app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM region")
+    cursor.execute("SELECT * FROM Pago_Tributario")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -27,73 +27,59 @@ def home():
     cursor.close()
     return render_template('Pago_Tributario.html', data=insertObject)
 
-@app.route('/region', methods=['POST'])
-def addregion():
-    codreg = request.form['codreg']
-    nomreg = request.form['nomreg']
+@app.route('/pago_tributario', methods=['POST'])
+def add_pago_tributario():
+    pagtricod = request.form['pagtricod']
+    pagtrifec = request.form['pagtrifec']
+    cascoc = request.form['cascod']
     
-    if codreg and nomreg:
+    if pagtricod and cascoc:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM region WHERE RegCod = %s", (codreg,))
+        cursor.execute("SELECT * FROM Pago_Tributario WHERE PagTriCod = %s", (pagtricod,))
         existing_cod = cursor.fetchone()
         
-        # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM region WHERE RegNom = %s", (nomreg,))
-        existing_nom = cursor.fetchone()
-        
         if existing_cod:
-            flash('El código de región ya existe. Por favor ingrese un código diferente.')
-            cursor.close()
-            return redirect(url_for('home'))
-        elif existing_nom:
-            flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+            flash('El código de pago tributario ya existe. Por favor ingrese un código diferente.')
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO region (RegCod, RegNom, RegEstReg) VALUES (%s, %s, 'A')"
-        data = (codreg, nomreg)
+        sql = "INSERT INTO Pago_Tributario (PagTriCod, PagTriFec, CasCod, PagTriEstReg) VALUES (%s, %s, %s, 'A')"
+        data = (pagtricod, pagtrifec, cascoc)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
-        flash('Región insertada exitosamente.')
+        flash('Pago tributario insertado exitosamente.')
     return redirect(url_for('home'))
 
-@app.route('/delete/<string:codreg>')
-def delete(codreg):
+@app.route('/delete/<string:pagtricod>')
+def delete(pagtricod):
     cursor = db.database.cursor()
-    sql = "DELETE FROM region WHERE RegCod = %s"
-    data = (codreg,)
+    sql = "DELETE FROM Pago_Tributario WHERE PagTriCod = %s"
+    data = (pagtricod,)
     cursor.execute(sql, data)
     db.database.commit()
     return redirect(url_for('home'))
 
-@app.route('/edit/<string:codreg>', methods=['POST'])
-def edit(codreg):
+@app.route('/edit/<string:pagtricod>', methods=['POST'])
+def edit(pagtricod):
     if 'action' in request.form:
         action = request.form['action']
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE region SET RegEstReg='I' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE Pago_Tributario SET PagTriEstReg='I' WHERE PagTriCod=%s"
+            cursor.execute(sql, (pagtricod,))
         elif action == 'activar':
-            sql = "UPDATE region SET RegEstReg='A' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE Pago_Tributario SET PagTriEstReg='A' WHERE PagTriCod=%s"
+            cursor.execute(sql, (pagtricod,))
         elif action == 'edit':
-            nomreg = request.form['nomreg']
-            if nomreg:
-                # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM region WHERE RegNom = %s AND RegCod != %s", (nomreg, codreg))
-                existing_nom = cursor.fetchone()
-                if existing_nom:
-                    flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
-                    cursor.close()
-                    return redirect(url_for('home'))
-
-                sql = "UPDATE region SET RegNom=%s WHERE RegCod=%s"
-                cursor.execute(sql, (nomreg, codreg))
+            pagtrifec = request.form['pagtrifec']
+            cascoc = request.form['cascod']
+            if pagtrifec and cascoc:
+                sql = "UPDATE Pago_Tributario SET PagTriFec=%s, CasCod=%s WHERE PagTriCod=%s"
+                cursor.execute(sql, (pagtrifec, cascoc, pagtricod))
         
         db.database.commit()
         cursor.close()
@@ -102,3 +88,4 @@ def edit(codreg):
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
+
