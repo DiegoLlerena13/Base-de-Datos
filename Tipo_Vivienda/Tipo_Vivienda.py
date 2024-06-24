@@ -5,19 +5,22 @@ import sys
 # Agregar el directorio raíz del proyecto al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Ahora puedes importar el archivo database.py
+# Importar el archivo database.py
 import database as db
 
+# Configuración de la plantilla
 template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 template_dir = os.path.join(template_dir, 'Tipo_Vivienda', 'templates')
 
+# Crear la aplicación Flask
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 
+# Ruta principal
 @app.route('/')
 def home():
     cursor = db.database.cursor()
-    cursor.execute("SELECT * FROM region")
+    cursor.execute("SELECT * FROM tipovivienda")
     myresult = cursor.fetchall()
 
     insertObject = []
@@ -27,73 +30,76 @@ def home():
     cursor.close()
     return render_template('Tipo_Vivienda.html', data=insertObject)
 
-@app.route('/region', methods=['POST'])
-def addregion():
-    codreg = request.form['codreg']
-    nomreg = request.form['nomreg']
+# Ruta para agregar un tipo de vivienda
+@app.route('/tipovivienda', methods=['POST'])
+def add_tipovivienda():
+    codtipoviv = request.form['codtipoviv']
+    nomtipoviv = request.form['nomtipoviv']
     
-    if codreg and nomreg:
+    if codtipoviv and nomtipoviv:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
-        cursor.execute("SELECT * FROM region WHERE RegCod = %s", (codreg,))
+        cursor.execute("SELECT * FROM tipovivienda WHERE TipVivCod = %s", (codtipoviv,))
         existing_cod = cursor.fetchone()
         
         # Verificar si el nombre ya existe
-        cursor.execute("SELECT * FROM region WHERE RegNom = %s", (nomreg,))
+        cursor.execute("SELECT * FROM tipovivienda WHERE TipVivNom = %s", (nomtipoviv,))
         existing_nom = cursor.fetchone()
         
         if existing_cod:
-            flash('El código de región ya existe. Por favor ingrese un código diferente.')
+            flash('El código de tipo de vivienda ya existe. Por favor ingrese un código diferente.')
             cursor.close()
             return redirect(url_for('home'))
         elif existing_nom:
-            flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+            flash('El nombre del tipo de vivienda ya existe. Por favor ingrese un nombre diferente.')
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO region (RegCod, RegNom, RegEstReg) VALUES (%s, %s, 'A')"
-        data = (codreg, nomreg)
+        sql = "INSERT INTO tipovivienda (TipVivCod, TipVivNom, TipVivEstReg) VALUES (%s, %s, 'A')"
+        data = (codtipoviv, nomtipoviv)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
-        flash('Región insertada exitosamente.')
+        flash('Tipo de vivienda insertado exitosamente.')
     return redirect(url_for('home'))
 
-@app.route('/delete/<string:codreg>')
-def delete(codreg):
+# Ruta para eliminar un tipo de vivienda
+@app.route('/delete/<string:codtipoviv>')
+def delete_tipovivienda(codtipoviv):
     cursor = db.database.cursor()
-    sql = "DELETE FROM region WHERE RegCod = %s"
-    data = (codreg,)
+    sql = "DELETE FROM tipovivienda WHERE TipVivCod = %s"
+    data = (codtipoviv,)
     cursor.execute(sql, data)
     db.database.commit()
     return redirect(url_for('home'))
 
-@app.route('/edit/<string:codreg>', methods=['POST'])
-def edit(codreg):
+# Ruta para editar un tipo de vivienda
+@app.route('/edit/<string:codtipoviv>', methods=['POST'])
+def edit_tipovivienda(codtipoviv):
     if 'action' in request.form:
         action = request.form['action']
         cursor = db.database.cursor()
         
         if action == 'inactivar':
-            sql = "UPDATE region SET RegEstReg='I' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE tipovivienda SET TipVivEstReg='I' WHERE TipVivCod=%s"
+            cursor.execute(sql, (codtipoviv,))
         elif action == 'activar':
-            sql = "UPDATE region SET RegEstReg='A' WHERE RegCod=%s"
-            cursor.execute(sql, (codreg,))
+            sql = "UPDATE tipovivienda SET TipVivEstReg='A' WHERE TipVivCod=%s"
+            cursor.execute(sql, (codtipoviv,))
         elif action == 'edit':
-            nomreg = request.form['nomreg']
-            if nomreg:
+            nomtipoviv = request.form['nomtipoviv']
+            if nomtipoviv:
                 # Verificar si el nombre ya existe para otros registros
-                cursor.execute("SELECT * FROM region WHERE RegNom = %s AND RegCod != %s", (nomreg, codreg))
+                cursor.execute("SELECT * FROM tipovivienda WHERE TipVivNom = %s AND TipVivCod != %s", (nomtipoviv, codtipoviv))
                 existing_nom = cursor.fetchone()
                 if existing_nom:
-                    flash('El nombre de la región ya existe. Por favor ingrese un nombre diferente.')
+                    flash('El nombre del tipo de vivienda ya existe. Por favor ingrese un nombre diferente.')
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE region SET RegNom=%s WHERE RegCod=%s"
-                cursor.execute(sql, (nomreg, codreg))
+                sql = "UPDATE tipovivienda SET TipVivNom=%s WHERE TipVivCod=%s"
+                cursor.execute(sql, (nomtipoviv, codtipoviv))
         
         db.database.commit()
         cursor.close()
