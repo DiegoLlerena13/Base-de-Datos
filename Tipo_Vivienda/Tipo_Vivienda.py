@@ -82,13 +82,13 @@ def edit_tipovivienda(codtipoviv):
         elif action == 'edit':
             desctipoviv = request.form['desctipoviv']
             if desctipoviv:
-                sql = "UPDATE Tipo_Vienda SET TipVivDes=%s WHERE TipVivCod=%s"
+                sql = "UPDATE Tipo_Vivienda SET TipVivDes=%s WHERE TipVivCod=%s"
                 cursor.execute(sql, (desctipoviv, codtipoviv))
         
         db.database.commit()
         cursor.close()
         flash('Cambios guardados exitosamente.')
-    return redirect(url_for('home'))
+    return redirect(url_for('home') )
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
