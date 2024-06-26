@@ -9,17 +9,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1 class="text-center mt-5 mb-5 text-primary">Zona Urbana</h1>
+    <h1 class="text-center mt-5 mb-5 text-primary">ZONA URBANA</h1>
     <div class="container">
         <!-- Mostrar mensajes de flash -->
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
+          {% if messages %}
             <div class="alert alert-warning mt-3" role="alert">
-            {% for message in messages %}
+              {% for message in messages %}
                 <p>{{ message }}</p>
-            {% endfor %}
+              {% endfor %}
             </div>
-        {% endif %}
+          {% endif %}
         {% endwith %}
 
         <div class="card shadow">
@@ -27,94 +27,106 @@
                 <button class="btn btn-primary btn-sm" id="btn-insert" data-bs-toggle="modal" data-bs-target="#modalinsert">Insertar</button>
                 <div class="modal fade" id="modalinsert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
-                    <div class="modal-content">
+                      <div class="modal-content">
                         <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Insertar Datos</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Insertar Datos</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                        <form action="/zonaurbana" method="post">
+                          <form action="/zona_urbana" method="post">
                             <label>CÓDIGO DE ZONA URBANA</label>
-                            <input type="text" class="form-control mb-3" name="codzona">
+                            <input type="text" class="form-control mb-3" name="cod_zona">
                             <label>NOMBRE DE ZONA URBANA</label>
-                            <input type="text" class="form-control mb-3" name="nomzona">
+                            <input type="text" class="form-control mb-3" name="nom_zona">
+                            <label>CÓDIGO DE MUNICIPIO</label>
+                            <select class="form-control mb-3" name="mun_cod">
+                                {% for m in municipios %}
+                                    <option value="{{ m.MunCod }}">{{ m.MunCod }} - {{ m.MunNom }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
                         </div>
                         </form>
-                    </div>
+                      </div>
                     </div>
                 </div>
-                <!--Tabla-->
-                <table class="table table-bordered">
+                <table class="table table-striped mt-2">
                     <thead>
-                        <th scope="col">CÓDIGO DE ZONA URBANA</th>
-                        <th scope="col">NOMBRE DE ZONA URBANA</th>
-                        <th scope="col">ESTADO DE REGISTRO</th>
-                        <th scope="col">EDIT</th>
-                        <th scope="col">DELETE</th>
+                        <tr>
+                            <th>CÓDIGO DE ZONA URBANA</th>
+                            <th>NOMBRE DE ZONA URBANA</th>
+                            <th>CÓDIGO DE MUNICIPIO</th>
+                            <th>ESTADO DE REGISTRO</th>
+                            <th>ACCIONES</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for d in data %}
                             <tr>
-                                <td>{{ d.ZUCod }}</td>
-                                <td>{{ d.ZUNom }}</td>
-                                <td>{{ d.ZUEstReg }}</td>
+                                <td>{{ d.ZonCod }}</td>
+                                <td>{{ d.ZonNom }}</td>
+                                <td>{{ d.MunCod }}</td>
+                                <td>{{ d.ZonEstReg }}</td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.ZUCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.ZUCod }}">Edit</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal
-                                    {{ d.ZUCod }}" data-regcod="{{ d.ZUCod }}" data-regnom="{{ d.ZUNom }}">Delete</button>
+                                    <div class="d-flex">
+                                        <button class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.ZonCod }}" data-zoncod="{{ d.ZonCod }}" data-zonnom="{{ d.ZonNom }}">Eliminar</button>
+                                        <button class="btn btn-warning btn-sm" id="btn-edit{{ d.ZonCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.ZonCod }}">Editar</button>
+                                    </div>
                                 </td>
                             </tr>
                             <!-- Edit Modal -->
-                            <div class="modal fade" id="modal{{ d.ZUCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.ZUCod }}" aria-hidden="true">
+                            <div class="modal fade" id="modal{{ d.ZonCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.ZonCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.ZUCod }}">{{ d.ZUNom }}</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="/edit/{{ d.ZUCod }}" method="post">
-                                                <label>CÓDIGO DE ZONA URBANA</label>
-                                                <p>{{ d.ZUCod }}</p>
-                                                <label>NOMBRE DE ZONA URBANA</label>
-                                                <input type="text" class="form-control mb-3" name="nomzona" value="{{ d.ZUNom }}">
-                                                <label>ESTADO DE REGISTRO</label>
-                                                <p>{{ d.ZUEstReg }}</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes</button>
-                                            <button type="submit" name="action" value="activar" class="btn btn-primary">Activar</button>
-                                            <button type="submit" name="action" value="inactivar" class="btn btn-danger">Inactivar</button>
-                                            </form>
-                                        </div>
+                                      <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Zona Urbana</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form action="/edit/{{ d.ZonCod }}" method="post">
+                                          <label>CÓDIGO DE ZONA URBANA</label>
+                                          <p>{{d.ZonCod}}</p>
+                                          <label>NOMBRE DE ZONA URBANA</label>
+                                          <input type="text" class="form-control mb-3" name="nom_zona" value="{{ d.ZonNom}}">
+                                          <label>CÓDIGO DE MUNICIPIO</label>
+                                          <select class="form-control mb-3" name="mun_cod">
+                                              {% for m in municipios %}
+                                                  <option value="{{ m.MunCod }}" {% if m.MunCod == d.MunCod %} selected {% endif %}>{{ m.MunCod }} - {{ m.MunNom }}</option>
+                                              {% endfor %}
+                                          </select>
+                                          <label>ESTADO DE REGISTRO</label>
+                                          <p>{{d.ZonEstReg}}</p>
+                                          <div class="modal-footer">
+                                              <button type="submit" class="btn btn-primary" name="action" value="edit">Guardar cambios</button>
+                                              {% if d.ZonEstReg == 'A' %}
+                                              <button type="submit" class="btn btn-secondary" name="action" value="inactivar">Inactivar</button>
+                                              {% else %}
+                                              <button type="submit" class="btn btn-success" name="action" value="activar">Activar</button>
+                                              {% endif %}
+                                          </div>
+                                        </form>
+                                      </div>
                                     </div>
-                                </div>
+                                  </div>
                             </div>
                             <!-- Delete Modal -->
-                            <div class="modal fade" id="deleteModal{{ d.ZUCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.ZUCod }}" aria-hidden="true">
+                            <div class="modal fade" id="deleteModal{{ d.ZonCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.ZonCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.ZUCod }}">Confirmar Eliminación</h1>
+                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.ZonCod }}">Confirmar Eliminación</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <form>
-                                                <p>¿Desea eliminar este registro?</p>
-                                                <label>CÓDIGO DE ZONA URBANA</label>
-                                                <p id="modalRegCod{{ d.ZUCod }}">{{ d.ZUCod }}</p>
-                                                <label>NOMBRE DE ZONA URBANA</label>
-                                                <p id="modalRegNom{{ d.ZUCod }}">{{ d.ZUNom }}</p>
+                                                ¿Estás seguro que deseas eliminar la zona urbana {{ d.ZonNom }}?
                                             </form>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <a href="/delete/{{ d.ZUCod }}" class="btn btn-danger">Aceptar</a>
+                                            <a href="/delete/{{ d.ZonCod }}" class="btn btn-danger">Aceptar</a>
                                         </div>
                                     </div>
                                 </div>

@@ -46,14 +46,14 @@
                       </div>
                     </div>
                 </div>
-                <!--Tabla-->
-                <table class="table table-bordered">
+                <table class="table table-striped mt-2">
                     <thead>
-                        <th scope="col">CÓDIGO DE REGIÓN</th>
-                        <th scope="col">NOMBRE DE REGIÓN</th>
-                        <th scope="col">ESTADO DE REGISTRO</th>
-                        <th scope="col">EDIT</th>
-                        <th scope="col">DELETE</th>
+                        <tr>
+                            <th>CÓDIGO DE REGIÓN</th>
+                            <th>NOMBRE DE REGIÓN</th>
+                            <th>ESTADO DE REGISTRO</th>
+                            <th>ACCIONES</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for d in data %}
@@ -62,37 +62,40 @@
                                 <td>{{ d.RegNom }}</td>
                                 <td>{{ d.RegEstReg }}</td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.RegCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.RegCod }}">Edit</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.RegCod }}" data-regcod="{{ d.RegCod }}" data-regnom="{{ d.RegNom }}">Delete</button>
+                                    <div class="d-flex">
+                                        <button class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.RegCod }}" data-regcod="{{ d.RegCod }}" data-regnom="{{ d.RegNom }}">Eliminar</button>
+                                        <button class="btn btn-warning btn-sm" id="btn-edit{{ d.RegCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.RegCod }}">Editar</button>
+                                    </div>
                                 </td>
                             </tr>
                             <!-- Edit Modal -->
                             <div class="modal fade" id="modal{{ d.RegCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.RegCod }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.RegCod }}">{{ d.RegNom }}</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="/edit/{{ d.RegCod }}" method="post">
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <p>{{ d.RegCod }}</p>
-                                                <label>NOMBRE DE REGIÓN</label>
-                                                <input type="text" class="form-control mb-3" name="nomreg" value="{{ d.RegNom }}">
-                                                <label>ESTADO DE REGISTRO</label>
-                                                <p>{{ d.RegEstReg }}</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Save Changes<</button>
-                                            <button type="submit" name="action" value="activar" class="btn btn-primary"> Activar</button>
-                                            <button type="submit" name="action" value="inactivar" class="btn btn-danger">Inactivar</button>
-                                            </form>
-                                        </div>
+                                      <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Región</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form action="/edit/{{ d.RegCod }}" method="post">
+                                          <label>CÓDIGO DE REGIÓN</label>
+                                          <p>{{d.RegCod}}</p>
+                                          <label>NOMBRE DE REGION</label>
+                                          <input type="text" class="form-control mb-3" name="nomreg" value="{{ d.RegNom}}">
+                                          <label>ESTADO DE REGISTRO</label>
+                                          <p>{{d.RegEstReg}}</p>
+                                          <div class="modal-footer">
+                                              <button type="submit" class="btn btn-primary" name="action" value="edit">Guardar cambios</button>
+                                              {% if d.RegEstReg == 'A' %}
+                                              <button type="submit" class="btn btn-secondary" name="action" value="inactivar">Inactivar</button>
+                                              {% else %}
+                                              <button type="submit" class="btn btn-success" name="action" value="activar">Activar</button>
+                                              {% endif %}
+                                          </div>
+                                        </form>
+                                      </div>
                                     </div>
-                                </div>
+                                  </div>
                             </div>
                             <!-- Delete Modal -->
                             <div class="modal fade" id="deleteModal{{ d.RegCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.RegCod }}" aria-hidden="true">
@@ -104,11 +107,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <form>
-                                                <p>¿Desea eliminar este registro?</p>
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <p id="modalRegCod{{ d.RegCod }}">{{ d.RegCod }}</p>
-                                                <label>NOMBRE DE REGIÓN</label>
-                                                <p id="modalRegNom{{ d.RegCod }}">{{ d.RegNom }}</p>
+                                                ¿Estás seguro que deseas eliminar el municipio {{ d.RegNom }}?
                                             </form>
                                         </div>
                                         <div class="modal-footer">

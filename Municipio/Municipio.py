@@ -24,8 +24,12 @@ def home():
     columnNames = [column[0] for column in cursor.description]
     for record in myresult:
         insertObject.append(dict(zip(columnNames, record)))
+    
+    # Obtener los códigos de región
+    cursor.execute("SELECT RegCod, RegNom FROM Region")
+    regiones = cursor.fetchall()
     cursor.close()
-    return render_template('Municipio.html', data=insertObject)
+    return render_template('Municipio.html', data=insertObject, regiones=regiones)
 
 @app.route('/municipio', methods=['POST'])
 def add_municipio():
@@ -111,4 +115,3 @@ def edit_municipio(codmun):
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
-

@@ -14,8 +14,6 @@ template_dir = os.path.join(template_dir, 'Zona_Urbana', 'templates')
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'your_secret_key'  # Clave secreta para usar flash messages
 
-
-
 @app.route('/')
 def home():
     cursor = db.database.cursor()
@@ -26,15 +24,21 @@ def home():
     columnNames = [column[0] for column in cursor.description]
     for record in myresult:
         insertObject.append(dict(zip(columnNames, record)))
+    
+    cursor.execute("SELECT MunCod, MunNom FROM Municipio")
+    municipios = cursor.fetchall()
+    municipio_list = [{"MunCod": m[0], "MunNom": m[1]} for m in municipios]
+    
     cursor.close()
-    return render_template('Zona_Urbana.html', data=insertObject)
+    return render_template('Zona_Urbana.html', data=insertObject, municipios=municipio_list)
 
 @app.route('/zona_urbana', methods=['POST'])
 def add_zona():
     cod_zona = request.form['cod_zona']
     nom_zona = request.form['nom_zona']
+    mun_cod = request.form['mun_cod']
     
-    if cod_zona and nom_zona:
+    if cod_zona and nom_zona and mun_cod:
         cursor = db.database.cursor()
 
         # Verificar si el código ya existe
@@ -54,22 +58,12 @@ def add_zona():
             cursor.close()
             return redirect(url_for('home'))
 
-        sql = "INSERT INTO Zona_Urbana (ZonCod, ZonNom, ZonEstReg, MunCod) VALUES (%s, %s, 'A', 1)"  # Ajustar MunCod según sea necesario
-        data = (cod_zona, nom_zona)
+        sql = "INSERT INTO Zona_Urbana (ZonCod, ZonNom, ZonEstReg, MunCod) VALUES (%s, %s, 'A', %s)"
+        data = (cod_zona, nom_zona, mun_cod)
         cursor.execute(sql, data)
         db.database.commit()
         cursor.close()
         flash('Zona urbana insertada exitosamente.')
-    return redirect(url_for('home'))
-
-@app.route('/delete/<string:cod_zona>')
-def delete(cod_zona):
-    cursor = db.database.cursor()
-    sql = "DELETE FROM Zona_Urbana WHERE ZonCod = %s"
-    data = (cod_zona,)
-    cursor.execute(sql, data)
-    db.database.commit()
-    cursor.close()
     return redirect(url_for('home'))
 
 @app.route('/edit/<string:cod_zona>', methods=['POST'])
@@ -86,7 +80,8 @@ def edit(cod_zona):
             cursor.execute(sql, (cod_zona,))
         elif action == 'edit':
             nom_zona = request.form['nom_zona']
-            if nom_zona:
+            mun_cod = request.form['mun_cod']
+            if nom_zona and mun_cod:
                 # Verificar si el nombre ya existe para otros registros
                 cursor.execute("SELECT * FROM Zona_Urbana WHERE ZonNom = %s AND ZonCod != %s", (nom_zona, cod_zona))
                 existing_nom = cursor.fetchone()
@@ -95,12 +90,21 @@ def edit(cod_zona):
                     cursor.close()
                     return redirect(url_for('home'))
 
-                sql = "UPDATE Zona_Urbana SET ZonNom=%s WHERE ZonCod=%s"
-                cursor.execute(sql, (nom_zona, cod_zona))
+                sql = "UPDATE Zona_Urbana SET ZonNom=%s, MunCod=%s WHERE ZonCod=%s"
+                cursor.execute(sql, (nom_zona, mun_cod, cod_zona))
         
         db.database.commit()
         cursor.close()
         flash('Cambios guardados exitosamente.')
+    return redirect(url_for('home'))
+
+@app.route('/delete/<string:cod_zona>')
+def delete(cod_zona):
+    cursor = db.database.cursor()
+    sql = "DELETE FROM Zona_Urbana WHERE ZonCod = %s"
+    data = (cod_zona,)
+    cursor.execute(sql, data)
+    db.database.commit()
     return redirect(url_for('home'))
 
 if __name__ == '__main__':

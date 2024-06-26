@@ -43,7 +43,11 @@
                             <label>NÚMERO DE VIVIENDAS</label>
                             <input type="number" class="form-control mb-3" name="numviv">
                             <label>CÓDIGO DE REGIÓN</label>
-                            <input type="text" class="form-control mb-3" name="regcod">
+                            <select class="form-control mb-3" name="regcod">
+                                {% for region in regiones %}
+                                    <option value="{{ region[0] }}">{{ region[0] }} - {{ region[1] }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
@@ -51,91 +55,87 @@
                         </form>
                       </div>
                     </div>
-                </div>
-                <!--Tabla-->
-                <table class="table table-bordered">
+                  </div>
+                <table class="table table-striped mt-2">
                     <thead>
-                        <th scope="col">CÓDIGO DE MUNICIPIO</th>
-                        <th scope="col">NOMBRE DE MUNICIPIO</th>
-                        <th scope="col">PRESUPUESTO ANUAL</th>
-                        <th scope="col">NÚMERO DE VIVIENDAS</th>
-                        <th scope="col">CÓDIGO DE REGIÓN</th>
-                        <th scope="col">ESTADO DE REGISTRO</th>
-                        <th scope="col">EDITAR</th>
-                        <th scope="col">ELIMINAR</th>
+                        <tr>
+                            <th>Código</th>
+                            <th>Municipio</th>
+                            <th>Presupuesto Anual</th>
+                            <th>Número de Viviendas</th>
+                            <th>Estado</th>
+                            <th>Código de Región</th>
+                            <th>Acciones</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        {% for d in data %}
-                            <tr>
-                                <td>{{ d.MunCod }}</td>
-                                <td>{{ d.MunNom }}</td>
-                                <td>{{ d.MunPreAnu }}</td>
-                                <td>{{ d.MunNumViv }}</td>
-                                <td>{{ d.RegCod }}</td>
-                                <td>{{ d.MunEstReg }}</td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" id="btn-edit{{ d.MunCod }}" data-bs-toggle="modal" data-bs-target="#modal{{ d.MunCod }}">Editar</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.MunCod }}" data-muncod="{{ d.MunCod }}" data-munnom="{{ d.MunNom }}">Eliminar</button>
-                                </td>
-                            </tr>
-                            <!-- Edit Modal -->
-                            <div class="modal fade" id="modal{{ d.MunCod }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ d.MunCod }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
+                        {% for municipio in data %}
+                        <tr>
+                            <td>{{ municipio.MunCod }}</td>
+                            <td>{{ municipio.MunNom }}</td>
+                            <td>{{ municipio.MunPreAnu }}</td>
+                            <td>{{ municipio.MunNumViv }}</td>
+                            <td>{{ municipio.MunEstReg }}</td>
+                            <td>{{ municipio.RegCod }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modaldelete{{ municipio.MunCod }}">Eliminar</button>
+                                <div class="modal fade" id="modaldelete{{ municipio.MunCod }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel{{ d.MunCod }}">{{ d.MunNom }}</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar Municipio</h1>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="/edit/{{ d.MunCod }}" method="post">
-                                                <label>CÓDIGO DE MUNICIPIO</label>
-                                                <p>{{ d.MunCod }}</p>
-                                                <label>NOMBRE DE MUNICIPIO</label>
-                                                <input type="text" class="form-control mb-3" name="nommun" value="{{ d.MunNom }}">
-                                                <label>PRESUPUESTO ANUAL</label>
-                                                <input type="number" class="form-control mb-3" name="preanu" value="{{ d.MunPreAnu }}">
-                                                <label>NÚMERO DE VIVIENDAS</label>
-                                                <input type="number" class="form-control mb-3" name="numviv" value="{{ d.MunNumViv }}">
-                                                <label>CÓDIGO DE REGIÓN</label>
-                                                <input type="text" class="form-control mb-3" name="regcod" value="{{ d.RegCod }}">
-                                                <label>ESTADO DE REGISTRO</label>
-                                                <p>{{ d.MunEstReg }}</p>
+                                          ¿Estás seguro que deseas eliminar el municipio {{ municipio.MunNom }}?
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="submit" name="action" value="edit" class="btn btn-primary">Guardar Cambios</button>
-                                            <button type="submit" name="action" value="activar" class="btn btn-primary">Activar</button>
-                                            <button type="submit" name="action" value="inactivar" class="btn btn-danger">Inactivar</button>
-                                            </form>
+                                            <a href="/delete/{{ municipio.MunCod }}" class="btn btn-danger">Eliminar</a>
                                         </div>
+                                      </div>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- Delete Modal -->
-                            <div class="modal fade" id="deleteModal{{ d.MunCod }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ d.MunCod }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
+                                  </div>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modaledit{{ municipio.MunCod }}">Editar</button>
+                                <div class="modal fade" id="modaledit{{ municipio.MunCod }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="deleteModalLabel{{ d.MunCod }}">Confirmar Eliminación</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Municipio</h1>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form>
-                                                <p>¿Desea eliminar este registro?</p>
-                                                <label>CÓDIGO DE MUNICIPIO</label>
-                                                <p id="modalMunCod{{ d.MunCod }}">{{ d.MunCod }}</p>
-                                                <label>NOMBRE DE MUNICIPIO</label>
-                                                <p id="modalMunNom{{ d.MunCod }}">{{ d.MunNom }}</p>
-                                            </form>
+                                          <form action="/edit/{{ municipio.MunCod }}" method="post">
+                                            <label>CÓDIGO DE MUNICIPIO</label>
+                                            <p>{{municipio.MunCod}}</p>
+                                            <label>NOMBRE DE MUNICIPIO</label>
+                                            <input type="text" class="form-control mb-3" name="nommun" value="{{ municipio.MunNom }}">
+                                            <label>PRESUPUESTO ANUAL</label>
+                                            <input type="number" class="form-control mb-3" name="preanu" value="{{ municipio.MunPreAnu }}">
+                                            <label>NÚMERO DE VIVIENDAS</label>
+                                            <input type="number" class="form-control mb-3" name="numviv" value="{{ municipio.MunNumViv }}">
+                                            <label>CÓDIGO DE REGIÓN</label>
+                                            <select class="form-control mb-3" name="regcod">
+                                                {% for region in regiones %}
+                                                    <option value="{{ region[0] }}" {% if region[0] == municipio.RegCod %}selected{% endif %}>{{ region[0] }} - {{ region[1] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label>ESTADO DE REGISTRO</label>
+                                            <p>{{municipio.MunEstReg}}</p>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary" name="action" value="edit">Guardar cambios</button>
+                                                {% if municipio.MunEstReg == 'A' %}
+                                                <button type="submit" class="btn btn-secondary" name="action" value="inactivar">Inactivar</button>
+                                                {% else %}
+                                                <button type="submit" class="btn btn-success" name="action" value="activar">Activar</button>
+                                                {% endif %}
+                                            </div>
+                                          </form>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <a href="/delete/{{ d.MunCod }}" class="btn btn-danger">Aceptar</a>
-                                        </div>
+                                      </div>
                                     </div>
-                                </div>
-                            </div>
+                                  </div>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -144,4 +144,3 @@
     </div>
 </body>
 </html>
-
