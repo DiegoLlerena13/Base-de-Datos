@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
 import os
 import sys
+from mysql.connector import Error
+
 
 # Agregar el directorio raíz del proyecto al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -31,6 +33,26 @@ def home():
     
     cursor.close()
     return render_template('Zona_Urbana.html', data=insertObject, municipios=municipio_list)
+
+@app.route('/buscar_municipio', methods=['GET'])
+def buscar_municipio():
+    cursor = db.database.cursor()
+    term = request.args.get('term', '')
+    
+    if not cursor:
+        return jsonify({"error": "MySQL Connection not available"}), 500
+    
+    try:
+        cursor.execute("SELECT MunCod, MunNom FROM Municipio WHERE MunNom LIKE %s OR MunCod LIKE %s", (f'%{term}%', f'%{term}%'))
+        municipios = cursor.fetchall()
+        municipio_list = [{"id": m[0], "text": f"{m[1]} ({m[0]})"} for m in municipios]
+        return {'results': municipio_list}
+    except Error as e:
+        print(f"Error executing query: {e}")
+        return jsonify({"error": "Error executing query"}), 500
+    finally:
+            cursor.close()
+
 
 @app.route('/zona_urbana', methods=['POST'])
 def add_zona():
