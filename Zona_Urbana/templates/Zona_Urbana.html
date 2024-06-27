@@ -175,23 +175,27 @@
                                       </div>
                                       <div class="modal-body">
                                         <form action="/edit/{{ d.ZonCod }}" method="post">
-                                          <label>CÓDIGO DE ZONA URBANA</label>
-                                          <p>{{d.ZonCod}}</p>
-                                          <label>NOMBRE DE ZONA URBANA</label>
-                                          <input type="text" class="form-control mb-3" name="nom_zona" value="{{ d.ZonNom }}">
-                                          <label>MUNICIPIO: </label><br>
-                                          <select type="text"  class="form-control mb-3 select-municipio2" name="mun_cod" ><option value="" disable selected>{{d.MunCod}}</option></select>
-                                          <br><label>ESTADO DE REGISTRO</label>
-                                          <p>{{ d.ZonEstReg }}</p>
-                                          <div class="modal-footer">
-                                              <button type="submit" class="btn btn-primary" name="action" value="edit">Guardar cambios</button>
-                                              {% if d.ZonEstReg == 'A' %}
-                                              <button type="submit" class="btn btn-secondary" name="action" value="inactivar">Inactivar</button>
-                                              {% else %}
-                                              <button type="submit" class="btn btn-success" name="action" value="activar">Activar</button>
-                                              {% endif %}
-                                          </div>
+                                            <label>CÓDIGO DE ZONA URBANA</label>
+                                            <p>{{d.ZonCod}}</p>
+                                            <label>NOMBRE DE ZONA URBANA</label>
+                                            <input type="text" class="form-control mb-3" name="nom_zona" value="{{ d.ZonNom }}">
+                                            <label>MUNICIPIO: </label><br>
+                                            <select class="form-control mb-3 select-municipio2" name="mun_cod">
+                                                <option value="{{ d.MunCod }}" selected>{{ d.MunCod }}</option>
+                                            </select>
+                                            <br>
+                                            <label>ESTADO DE REGISTRO</label>
+                                            <p>{{ d.ZonEstReg }}</p>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary" name="action" value="edit">Guardar cambios</button>
+                                                {% if d.ZonEstReg == 'A' %}
+                                                    <button type="submit" class="btn btn-secondary" name="action" value="inactivar">Inactivar</button>
+                                                {% else %}
+                                                    <button type="submit" class="btn btn-success" name="action" value="activar">Activar</button>
+                                                {% endif %}
+                                            </div>
                                         </form>
+                                        
                                       </div>
                                     </div>
                                   </div>

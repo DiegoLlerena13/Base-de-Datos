@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import os
 import sys
 from mysql.connector import Error
@@ -49,7 +49,7 @@ def buscar_region():
         print(f"Error executing query: {e}")
         return jsonify({"error": "Error executing query"}), 500
     finally:
-            cursor.close()
+        cursor.close()
 
 @app.route('/municipio', methods=['POST'])
 def add_municipio():
@@ -57,7 +57,7 @@ def add_municipio():
     nommun = request.form['nommun']
     preanu = request.form['preanu']
     numviv = request.form['numviv']
-    regcod = request.form['regcod']
+    regcod = request.form['reg_cod']
     
     if codmun and nommun and preanu and numviv and regcod:
         cursor = db.database.cursor()

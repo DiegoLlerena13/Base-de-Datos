@@ -93,7 +93,7 @@ def edit(cod_zona):
     if 'action' in request.form:
         action = request.form['action']
         cursor = db.database.cursor()
-        
+
         if action == 'inactivar':
             sql = "UPDATE Zona_Urbana SET ZonEstReg='I' WHERE ZonCod=%s"
             cursor.execute(sql, (cod_zona,))
@@ -114,7 +114,7 @@ def edit(cod_zona):
 
                 sql = "UPDATE Zona_Urbana SET ZonNom=%s, MunCod=%s WHERE ZonCod=%s"
                 cursor.execute(sql, (nom_zona, mun_cod, cod_zona))
-        
+
         db.database.commit()
         cursor.close()
         flash('Cambios guardados exitosamente.')

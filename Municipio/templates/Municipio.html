@@ -11,15 +11,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <style>
-      /* Asegúrate de que el contenedor del desplegable tenga un z-index alto */
         .select2-container {
             z-index: 10000;
-            width: 300px !important; /* Ajusta el tamaño deseado */
-            max-width: 300px !important; /* Ajusta el tamaño deseado */
+            width: 300px !important;
+            max-width: 300px !important;
         }
         .select2-dropdown {
-            width: 300px !important; /* Asegúrate de que el dropdown mantenga el mismo tamaño */
-            max-width: 300px !important; /* Asegúrate de que el dropdown mantenga el mismo tamaño */
+            width: 300px !important;
+            max-width: 300px !important;
         }
     </style>
     <script type="text/javascript">
@@ -41,8 +40,6 @@
               placeholder: "Seleccione una region",
               allowClear: true,
               minimumInputLength: 0,
-  
-              // Buscar en el array local en lugar de hacer solicitudes AJAX
               ajax: {
                   transport: function (params, success, failure) {
                       var term = params.data.term || '';
@@ -56,23 +53,19 @@
                   delay: 250,
                   cache: true
               },
-  
               templateSelection: function(data, container) {
-                  // Permite la edición del input para refinar la búsqueda
                   var $result = $('<span contenteditable="true">' + data.text + '</span>');
                   $result.on('blur keyup paste input', function() {
                       var newTerm = $(this).text();
-                      // Trigger search with new term
                       $('.select2-search__field').val(newTerm).trigger('input');
                   });
                   return $result;
               }
           });
+          
           $('.select-region2').select2({
               allowClear: true,
               minimumInputLength: 0,
-  
-              // Buscar en el array local en lugar de hacer solicitudes AJAX
               ajax: {
                   transport: function (params, success, failure) {
                       var term = params.data.term || '';
@@ -86,13 +79,10 @@
                   delay: 250,
                   cache: true
               },
-  
               templateSelection: function(data, container) {
-                  // Permite la edición del input para refinar la búsqueda
                   var $result = $('<span contenteditable="true">' + data.text + '</span>');
                   $result.on('blur keyup paste input', function() {
                       var newTerm = $(this).text();
-                      // Trigger search with new term
                       $('.select2-search__field').val(newTerm).trigger('input');
                   });
                   return $result;
@@ -104,7 +94,6 @@
 <body>
     <h1 class="text-center mt-5 mb-5 text-primary">MUNICIPIO</h1>
     <div class="container">
-        <!-- Mostrar mensajes de flash -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             <div class="alert alert-warning mt-3" role="alert">
@@ -114,7 +103,6 @@
             </div>
           {% endif %}
         {% endwith %}
-
         <div class="card shadow">
             <div class="card-body">
                 <button class="btn btn-primary btn-sm" id="btn-insert" data-bs-toggle="modal" data-bs-target="#modalinsert">Insertar</button>
@@ -136,7 +124,7 @@
                             <label>NÚMERO DE VIVIENDAS</label>
                             <input type="number" class="form-control mb-3" name="numviv">
                             <label>REGIÓN: </label>
-                            <select type="text"  class="form-control mb-3 select-region1" name="reg_cod"></select>
+                            <select type="text" class="form-control mb-3 select-region1" name="reg_cod"></select>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">INSERTAR</button>
@@ -195,18 +183,20 @@
                                         <div class="modal-body">
                                           <form action="/edit/{{ municipio.MunCod }}" method="post">
                                             <label>CÓDIGO DE MUNICIPIO</label>
-                                            <p>{{municipio.MunCod}}</p>
+                                            <p>{{ municipio.MunCod }}</p>
                                             <label>NOMBRE DE MUNICIPIO</label>
                                             <input type="text" class="form-control mb-3" name="nommun" value="{{ municipio.MunNom }}">
                                             <label>PRESUPUESTO ANUAL</label>
                                             <input type="number" class="form-control mb-3" name="preanu" value="{{ municipio.MunPreAnu }}">
                                             <label>NÚMERO DE VIVIENDAS</label>
                                             <input type="number" class="form-control mb-3" name="numviv" value="{{ municipio.MunNumViv }}">
-                                            <label>REGION: </label><br>
-                                            <select type="text"  class="form-control mb-3 select-region2" name="reg_cod" ><option value="" disable selected>{{municipio.RegCod}}</option></select>
-                                            <br><label>ESTADO DE REGISTRO</label>
+                                            <label>REGIÓN: </label><br>
+                                            <select type="text" class="form-control mb-3 select-region2" name="reg_cod">
+                                              <option value="{{ municipio.RegCod }}" selected>{{ municipio.RegCod }}</option>
+                                            </select>
+                                            <br>
                                             <label>ESTADO DE REGISTRO</label>
-                                            <p>{{municipio.MunEstReg}}</p>
+                                            <p>{{ municipio.MunEstReg }}</p>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary" name="action" value="edit">Guardar cambios</button>
                                                 {% if municipio.MunEstReg == 'A' %}
