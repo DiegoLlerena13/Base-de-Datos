@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import os
 import sys
+from mysql.connector import Error
 
 # Agregar el directorio raíz del proyecto al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -24,8 +25,31 @@ def home():
     columnNames = [column[0] for column in cursor.description]
     for record in myresult:
         insertObject.append(dict(zip(columnNames, record)))
+    
+    # Obtener los códigos de región
+    cursor.execute("SELECT RegCod, RegNom FROM Region")
+    regiones = cursor.fetchall()
     cursor.close()
-    return render_template('Municipio.html', data=insertObject)
+    return render_template('Municipio.html', data=insertObject, regiones=regiones)
+
+@app.route('/buscar_region', methods=['GET'])
+def buscar_region():
+    cursor = db.database.cursor()
+    term = request.args.get('term', '')
+    
+    if not cursor:
+        return jsonify({"error": "MySQL Connection not available"}), 500
+    
+    try:
+        cursor.execute("SELECT RegCod, RegNom FROM Region WHERE RegNom LIKE %s OR RegCod LIKE %s", (f'%{term}%', f'%{term}%'))
+        regiones = cursor.fetchall()
+        region_list = [{"id": m[0], "text": f"{m[1]} ({m[0]})"} for m in regiones]
+        return {'results': region_list}
+    except Error as e:
+        print(f"Error executing query: {e}")
+        return jsonify({"error": "Error executing query"}), 500
+    finally:
+        cursor.close()
 
 @app.route('/municipio', methods=['POST'])
 def add_municipio():
@@ -33,7 +57,7 @@ def add_municipio():
     nommun = request.form['nommun']
     preanu = request.form['preanu']
     numviv = request.form['numviv']
-    regcod = request.form['regcod']
+    regcod = request.form['reg_cod']
     
     if codmun and nommun and preanu and numviv and regcod:
         cursor = db.database.cursor()
@@ -90,7 +114,7 @@ def edit_municipio(codmun):
             nommun = request.form['nommun']
             preanu = request.form['preanu']
             numviv = request.form['numviv']
-            regcod = request.form['regcod']
+            regcod = request.form['reg_cod']
             
             if nommun and preanu and numviv and regcod:
                 # Verificar si el nombre ya existe para otros registros
@@ -111,4 +135,3 @@ def edit_municipio(codmun):
 
 if __name__ == '__main__':
     app.run(debug=True, port=4000)
-
